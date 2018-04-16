@@ -12,3 +12,7 @@ export const heading = css`
 export const noMargin = css`
   margin: 0px;
 `;
+
+export const image = css`
+  width: 100%;
+`;

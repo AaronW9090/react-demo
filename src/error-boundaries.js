@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { css } from 'emotion';
-import { container, heading, noMargin } from './styles';
+import { container, heading, noMargin, image } from './styles';
 import ErrorBoundaryHOCImage from './images/ErrorBoundaryHOC.png';
 import ErrorBoundaryHOEImage from './images/ErrorBoundaryHOE.png';
 
@@ -12,18 +12,14 @@ const error = css`
   text-align: center;
 `;
 
-const image = css`
-  width: 100%;
-`;
-
 class Error extends Component {
-  render() {
+  render () {
     return <div className={error}>{this.props.children}</div>;
   }
 }
 
-function withErrorBoundary() {
-  return function(WrappedComponent) {
+function withErrorBoundary () {
+  return function (WrappedComponent) {
     class ErrorBoundaryHOC extends React.Component {
       state = {
         hasError: false,
@@ -31,11 +27,11 @@ function withErrorBoundary() {
         info: null
       };
 
-      componentDidCatch(error, info) {
+      componentDidCatch () {
         this.setState(state => ({ ...state, hasError: true }));
       }
 
-      render() {
+      render () {
         const { hasError } = this.state;
         if (hasError) {
           return (
@@ -60,11 +56,11 @@ class ErrorBoundaryHOE extends React.Component {
     info: null
   };
 
-  componentDidCatch(error, info) {
+  componentDidCatch () {
     this.setState(state => ({ ...state, hasError: true }));
   }
 
-  render() {
+  render () {
     const { hasError } = this.state;
     if (hasError) {
       return (
@@ -83,19 +79,19 @@ class ErrorComponent extends Component {
     someState: {}
   };
 
-  constructor(props) {
+  constructor (props) {
     super(props);
     this.makeErrorHappen = this.makeErrorHappen.bind(this);
   }
 
-  makeErrorHappen() {
+  makeErrorHappen () {
     this.setState(state => ({
       ...state,
       someState: state.someState.someProperty.undefinedSubProperty
     }));
   }
 
-  render() {
+  render () {
     return <button onClick={this.makeErrorHappen}>Error me!</button>;
   }
 }
@@ -105,7 +101,7 @@ const ErrorComponentHOC = withErrorBoundary()(ErrorComponent);
 class ErrorBoundaries extends Component {
   static displayName = 'ErrorBoundariesExample';
 
-  render() {
+  render () {
     return (
       <Fragment>
         <h2 className={heading}>Error Boundaries</h2>
@@ -154,7 +150,7 @@ class ErrorBoundaries extends Component {
           </p>
           <ErrorComponent />
         </div>
-        <h3 className={noMargin}>Error Boundary HOE</h3>
+        <h3 className={noMargin}>Error Boundary Higher Order Element</h3>
         <div className={container}>
           <p>
             While any component can implement componentDidCatch, having an error
@@ -164,7 +160,7 @@ class ErrorBoundaries extends Component {
             <ErrorComponent />
           </ErrorBoundaryHOE>
         </div>
-        <h3 className={noMargin}>Error Boundary HOC</h3>
+        <h3 className={noMargin}>Error Boundary Higher Order Component</h3>
         <div className={container}>
           <p>
             However an error boundary HOC can make reusing components with error

@@ -31,33 +31,33 @@ const modal = css`
 `;
 
 class EventPropagationPortal extends Component {
-  constructor(props) {
+  constructor (props) {
     super(props);
     this.containerEl = document.createElement('div');
     this.containerEl.className = overlay;
   }
 
-  componentDidMount() {
+  componentDidMount () {
     document.body.appendChild(this.containerEl);
   }
 
-  componentWillUnmount() {
+  componentWillUnmount () {
     document.body.removeChild(this.containerEl);
   }
 
-  render() {
+  render () {
     return ReactDOM.createPortal(this.props.children, this.containerEl);
   }
 }
 
 class WindowPortal extends Component {
-  constructor(props) {
+  constructor (props) {
     super(props);
     this.externalWindow = null;
     this.containerEl = document.createElement('div');
   }
 
-  componentDidMount() {
+  componentDidMount () {
     this.externalWindow = window.open(
       '',
       '',
@@ -91,11 +91,11 @@ class WindowPortal extends Component {
     );
   }
 
-  componentWillUnmount() {
+  componentWillUnmount () {
     this.externalWindow.close();
   }
 
-  render() {
+  render () {
     return ReactDOM.createPortal(this.props.children, this.containerEl);
   }
 }
@@ -103,7 +103,7 @@ class WindowPortal extends Component {
 class Portals extends Component {
   static displayName = 'PortalsExample';
 
-  constructor(props) {
+  constructor (props) {
     super(props);
     this.state = {
       windowPortalOpen: false,
@@ -115,29 +115,29 @@ class Portals extends Component {
     this.incrementCount = this.incrementCount.bind(this);
   }
 
-  toggleWindowPortal() {
+  toggleWindowPortal () {
     this.setState(state => ({
       ...state,
       windowPortalOpen: !state.windowPortalOpen
     }));
   }
 
-  toggleEventPortal() {
+  toggleEventPortal () {
     this.setState(state => ({
       ...state,
       eventPortalOpen: !state.eventPortalOpen
     }));
   }
 
-  closeWindowPortal() {
+  closeWindowPortal () {
     this.setState(state => ({ ...state, windowPortalOpen: false }));
   }
 
-  incrementCount() {
+  incrementCount () {
     this.setState(state => ({ ...state, count: state.count + 1 }));
   }
 
-  render() {
+  render () {
     const { windowPortalOpen, eventPortalOpen, count } = this.state;
     return (
       <Fragment>
@@ -195,8 +195,8 @@ class Portals extends Component {
             style={{ width: '150px' }}
             onClick={this.toggleWindowPortal}
           >{`${
-            windowPortalOpen ? 'Close window' : 'Open window'
-          } portal`}</button>
+              windowPortalOpen ? 'Close window' : 'Open window'
+            } portal`}</button>
           <button onClick={this.incrementCount}>Increment</button>
         </div>
         <h3>Event Propagation Portal</h3>

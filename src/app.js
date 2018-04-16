@@ -10,8 +10,9 @@ const Fragment = React.Fragment;
 
 const container = css`
   display: flex;
-  margin-top: 50px;
+  margin: 50px auto;
   align-items: flex-start;
+  max-width: 1000px;
 `;
 
 const menuItem = css`
@@ -21,7 +22,7 @@ const menuItem = css`
   border-bottom: 1px solid #eee;
   cursor: pointer;
   &:hover {
-    background-color: #007D54;
+    background-color: #007d54;
   }
   &:last-child {
     border-bottom: none;
@@ -63,7 +64,9 @@ class Display extends Component {
           ))}
         </div>
         <div className={content}>
-          {React.Children.toArray(children).find(child => child.type.displayName === display)}
+          {React.Children.toArray(children).find(
+            child => child.type.displayName === display
+          )}
         </div>
       </Fragment>
     );

@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 class Refs extends Component {
   static displayName = 'RefsExample';
 
-  render() {
+  render () {
     return <div />;
   }
 }
