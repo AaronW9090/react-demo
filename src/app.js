@@ -1,12 +1,11 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import { css } from 'emotion';
 import ErrorBoundaries from './error-boundaries';
 import Portals from './portals';
 import LifecycleMethods from './lifecycle-methods';
 import Refs from './refs';
-import Context from './context';
-
-const Fragment = React.Fragment;
+import Context, { ContextProvider } from './context';
+import Finish from './finish';
 
 const container = css`
   display: flex;
@@ -31,8 +30,15 @@ const menuItem = css`
 
 const content = css`
   display: flex;
+  flex-direction: column;
   flex-wrap: wrap;
+  align-items: flex-start;
   padding: 0px 20px 20px 20px;
+  width: 100%;
+`;
+
+const active = css`
+  background-color: #007d54;
 `;
 
 class Display extends Component {
@@ -56,7 +62,9 @@ class Display extends Component {
         <div>
           {React.Children.map(children, child => (
             <div
-              className={menuItem}
+              className={`${menuItem}${
+                child.type.displayName === display ? ` ${active}` : ''
+              }`}
               onClick={() => this.handleClick(child.type.displayName)}
             >
               {child.type.displayName}
@@ -76,15 +84,18 @@ class Display extends Component {
 class App extends Component {
   render () {
     return (
-      <div className={container}>
-        <Display>
-          <ErrorBoundaries />
-          <Portals />
-          <LifecycleMethods />
-          <Refs />
-          <Context />
-        </Display>
-      </div>
+      <ContextProvider>
+        <div className={container}>
+          <Display>
+            <ErrorBoundaries />
+            <Portals />
+            <LifecycleMethods />
+            <Context />
+            <Refs />
+            <Finish />
+          </Display>
+        </div>
+      </ContextProvider>
     );
   }
 }

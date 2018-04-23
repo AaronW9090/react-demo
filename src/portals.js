@@ -1,9 +1,9 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import ReactDOM from 'react-dom';
 import { css } from 'emotion';
-import { container, heading, noMargin } from './styles';
-
-const Fragment = React.Fragment;
+import { connect } from './context';
+import { container, heading, image } from './styles';
+import PortalImage from './images/Portal.png';
 
 const overlay = css`
   position: fixed;
@@ -37,6 +37,9 @@ class EventPropagationPortal extends Component {
     this.containerEl.className = overlay;
   }
 
+  // This appends the node after the portaled content has been rendered
+  // If the node you are portalling needs to be measured then it's a good idea
+  // to have the container node ready to go before the component is created
   componentDidMount () {
     document.body.appendChild(this.containerEl);
   }
@@ -106,8 +109,7 @@ class Portals extends Component {
   constructor (props) {
     super(props);
     this.state = {
-      windowPortalOpen: false,
-      count: 0
+      windowPortalOpen: false
     };
     this.toggleWindowPortal = this.toggleWindowPortal.bind(this);
     this.toggleEventPortal = this.toggleEventPortal.bind(this);
@@ -134,44 +136,52 @@ class Portals extends Component {
   }
 
   incrementCount () {
-    this.setState(state => ({ ...state, count: state.count + 1 }));
+    const {
+      actions: { increment }
+    } = this.props;
+    increment();
   }
 
   render () {
-    const { windowPortalOpen, eventPortalOpen, count } = this.state;
+    const { windowPortalOpen, eventPortalOpen } = this.state;
+    const { counter } = this.props;
     return (
       <Fragment>
         <h2 className={heading}>Portals</h2>
+        <h3 className={heading}>What</h3>
         <div className={container}>
-          <ul className={noMargin}>
-            <li>
-              Portals are a way to render content to an arbitrary DOM node,
-              outside of where it would normally be rendered in the react tree
-            </li>
-            <li>
-              This can be useful for elements like Modal or Toast where you
-              would like to pass some props from the parent component to the
-              child Modal component but don't want the parents styling to have
-              any affect over the Modal whatsoever
-            </li>
-            <li>
-              What is interesting is that the portaled child acts exactly like
-              it would in every other way, as it is still in the exact same
-              position in the react tree
-            </li>
-            <li>
-              This means that events will be captured by and bubble up through
-              its' parent component
-            </li>
-            <ul>
-              <li>Could lead to some very interesting bugs</li>
-              <li>
-                a Modal that is triggered from a slidedown row in a Table
-                component could very well close the slidedown as you submit the
-                form inside the Modal
-              </li>
-            </ul>
-          </ul>
+          <p>
+            Portals are a way to render content to an arbitrary DOM node,
+            outside of where it would normally be rendered in the react tree.
+          </p>
+          <p>
+            This can be useful for elements like Modal or Toast where you would
+            like to pass some props from the parent component to the child Modal
+            component but don't want the parents styling to have any affect over
+            the Modal whatsoever.
+          </p>
+          <p>
+            The portaled child acts exactly like it would in every other way, as
+            it is still in the exact same position in the react tree. This means
+            that things like context and event bubbling will work in the exact
+            same way as if the component were not portaled.
+          </p>
+        </div>
+        <h3 className={heading}>Why</h3>
+        <div className={container}>
+          <p>
+            Creating portals in React 15 and below was possible and could be
+            done by rendering out null in render() but using ReactDOM.render()
+            in componentDidMount and re-rendering manually when the component
+            updates. However this approach was ugly and error prone, and could
+            lead to some confusing bugs because event bubbling and context
+            doesn't work as expected just by looking at a component with a
+            portaled child.
+          </p>
+        </div>
+        <h3 className={heading}>How</h3>
+        <div className={container}>
+          <img className={image} src={PortalImage} alt="" />
         </div>
         <h3>Window Portal</h3>
         <div className={container}>
@@ -187,7 +197,7 @@ class Portals extends Component {
                   fontSize: '24px'
                 }}
               >
-                {count}
+                {counter}
               </div>
             </WindowPortal>
           )}
@@ -209,7 +219,7 @@ class Portals extends Component {
             {eventPortalOpen && (
               <EventPropagationPortal>
                 <div className={modal}>
-                  {count}
+                  {counter}
                   <button onClick={this.toggleEventPortal}>Close portal</button>
                 </div>
               </EventPropagationPortal>
@@ -222,4 +232,13 @@ class Portals extends Component {
   }
 }
 
-export default Portals;
+const mapCountToProps = function (state) {
+  return {
+    counter: state.counter
+  };
+};
+
+const connectedPortals = connect(mapCountToProps)(Portals);
+connectedPortals.displayName = 'PortalsExample';
+
+export default connectedPortals;

@@ -20,11 +20,16 @@ injectGlobal`
     height: 30px;
   }
 
-  h1, h2, h3, h4, h5, h6 {
+  h1, h2, h3 {
     border-bottom: 1px solid #eee;
   }
 
-  p, ul {
+  p {
+    margin-top: 0px;
+    line-height: 26px;
+  }
+
+  ul {
     line-height: 26px;
   }
 `;

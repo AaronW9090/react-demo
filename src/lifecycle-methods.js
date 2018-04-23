@@ -1,19 +1,43 @@
-import React, { Component } from 'react';
-import { container, heading, noMargin, image } from './styles';
+import React, { Component, Fragment } from 'react';
+import { container, heading, image } from './styles';
 import RenderLifecycle from './images/RenderLifecycle.jpg';
-
-const Fragment = React.Fragment;
 
 class GetDerivedStateFromProps extends Component {
   static getDerivedStateFromProps (nextProps, prevState) {
-    console.log(nextProps, prevState);
+    if (nextProps.firstName !== prevState.firstName) {
+      return {
+        firstName: nextProps.firstName,
+        uppercaseName: nextProps.firstName.toUpperCase()
+      };
+    }
     return null;
   }
 
-  state = {};
+  constructor (props) {
+    super(props);
+    this.state = {
+      firstName: this.props.firstName,
+      uppercaseName: this.props.firstName.toUpperCase()
+    };
+  }
+
+  state = {
+    firstName: '',
+    uppercaseName: ''
+  };
 
   render () {
-    return <div />;
+    return (
+      <div>
+        <p>
+          Name: <span style={{ color: 'crimson' }}>{this.props.firstName}</span>
+        </p>
+        <p>
+          Uppercase Name:{' '}
+          <span style={{ color: 'crimson' }}>{this.state.uppercaseName}</span>
+        </p>
+      </div>
+    );
   }
 }
 
@@ -30,48 +54,60 @@ class GetSnapshotBeforeUpdate extends Component {
 class LifecycleMethods extends Component {
   static displayName = 'LifecycleMethodsExample';
 
-  state = {};
-
-  toggleProps () {
-    this.setState(state => ({ ...state }));
-  }
+  state = {
+    firstName: ''
+  };
 
   render () {
     return (
       <Fragment>
         <h2 className={heading}>Lifecycle Methods</h2>
-        <ul className={noMargin}>
-          <li>
+        <h3 className={heading}>What</h3>
+        <div className={container}>
+          <p>
             The lifecycle methods, componentWillMount, componentWillReceiveProps
             and componentWillUpdate are being deprecated in a future release of
             React 16 to be completely removed in React 17
-          </li>
-          <li>
+          </p>
+          <p>
             React 16.3 introduces aliases to these methods using the UNSAFE_
-            prefix
-          </li>
-          <ul>
-            <li>
-              These <strong>WILL</strong> continue to work in React 17
-            </li>
-          </ul>
-          <li>
-            componentWillMount and componentWillUpdate are mostly unneccesary
-            anyway as all of the work that is done using them can be done with
-            componentDidMount and componentDidUpdate but with fiber's new
-            scheduling priority system the 'will' methods aren't guaranteed to
-            only run once
-          </li>
-        </ul>
-        <div className={container}>
-          <img
-            className={image}
-            style={{ marginTop: '25px' }}
-            src={RenderLifecycle}
-            alt=""
-          />
+            prefix. These <strong>WILL</strong> continue to work in React 17
+          </p>
+          <p>
+            As a replacement for these methods React 16.3 introduces the
+            getDerivedStateFromProps and getSnapshotBeforeUpdate lifecycle
+            methods.
+          </p>
+          <p>
+            <a href="https://github.com/reactjs/reactjs.org/issues/721">This</a>{' '}
+            is a good discussion on how and why these lifecycle methods were
+            introduced
+          </p>
         </div>
-        <h3>getDerivedStateFromProps</h3>
+        <img
+          className={image}
+          style={{ marginBottom: '30px' }}
+          src={RenderLifecycle}
+          alt=""
+        />
+        <h3 className={heading}>Why</h3>
+        <div className={container}>
+          <p>
+            With the current API it is too easy to block the initial render with
+            inessential logic. The componentWill* lifecycle methods were fairly
+            unclear in their purpose, had some major performance implications if
+            they were misused and, for the most part, the problem that was being
+            solved could have used one of the componentDid* lifecycle methods.
+          </p>
+          <p>
+            The Fiber architecture also doesn't play well with these methods
+            because to be able to pause, abort and restart updates, the
+            componentWill* lifecycle methods aren't guaranteed to only be run
+            once.
+          </p>
+        </div>
+        <h3 className={heading}>How</h3>
+        <h4>getDerivedStateFromProps (nextProps, prevState)</h4>
         <div className={container}>
           <ul>
             <li>
@@ -108,10 +144,18 @@ class LifecycleMethods extends Component {
               getDerivedStateFromProps will be called
             </li>
           </ul>
-          <GetDerivedStateFromProps {...this.state} />
-          <button onClick={this.toggleProps}>Toggle Props</button>
+          <GetDerivedStateFromProps firstName={this.state.firstName} />
+          <input
+            style={{ color: '#1e1f20' }}
+            type="text"
+            value={this.state.firstName}
+            onChange={e => {
+              e.persist();
+              this.setState(state => ({ ...state, firstName: e.target.value }));
+            }}
+          />
         </div>
-        <h3>getSnapshotBeforeUpdate</h3>
+        <h4>getSnapshotBeforeUpdate (prevProps, prevState)</h4>
         <div className={container}>
           <ul>
             <li>
@@ -133,8 +177,11 @@ class LifecycleMethods extends Component {
             </li>
             <li>
               It's return value is then passed as the third parameter to
-              componentDidUpdate, which is called immediately after DOM
-              mutations
+              componentDidUpdate, which is called
+              <strong>
+                <i> immediately after </i>
+              </strong>
+              DOM mutations
             </li>
             <li>
               This method is intended to only be used with componentDidUpdate,
